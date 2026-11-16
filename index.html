@@ -9,149 +9,233 @@
 :root{--bg:#f6f3ea;--card:#fff;--ink:#1c2541;--mut:#6b7186;--gold:#c9a227;--goldbg:#f5e6a8;--ok:#2e8b57;--line:#e3dfd0}
 @media (prefers-color-scheme:dark){:root{--bg:#10162b;--card:#1a2240;--ink:#f1eddc;--mut:#9aa1ba;--gold:#e0b93a;--goldbg:#5a4a12;--ok:#5ccf93;--line:#2c3558;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:480px;margin-inline:auto}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px;max-width:520px;margin-inline:auto}
 h1{font-family:Georgia,serif;font-size:22px;margin:4px 0 2px}
-.sub{color:var(--mut);font-size:14px;margin:0 0 14px}
+.sub{color:var(--mut);font-size:14px;margin:0 0 12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
-input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px}
+input,select,textarea{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:16px;font-family:inherit;margin-top:6px}
+button{font-family:inherit;color:var(--ink)}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:15px}
+.tabs button.on{background:var(--goldbg);border-color:var(--gold);font-weight:700}
 .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.nav button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:10px;width:40px;height:40px;font-size:18px}
+.nav button{background:none;border:1px solid var(--line);border-radius:10px;width:40px;height:40px;font-size:18px}
 .nav b{font-family:Georgia,serif;font-size:18px;text-transform:capitalize}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.dow{font-size:12px;color:var(--mut);text-align:center;padding:2px 0}
-.d{aspect-ratio:1;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px;position:relative;padding:0}
+.dow{font-size:12px;color:var(--mut);text-align:center}
+.d{aspect-ratio:1;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:14px;position:relative;padding:0}
 .d.me{background:var(--goldbg);border-color:var(--gold);font-weight:700}
 .d.both{border:2px solid var(--ok)}
+.d.sel{outline:2px solid var(--ink)}
 .d.off{opacity:.3}
-.d i{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:9px;font-style:normal;color:var(--ok)}
+.d i{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:9px;font-style:normal;color:var(--ok);line-height:1}
 .leg{font-size:12px;color:var(--mut);margin-top:8px}
-.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px}
 .row:last-child{border:0}
 .ok{color:var(--ok);font-weight:600}
 .msg{color:var(--mut);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-size:13px}
+.chip.on{background:var(--goldbg);border-color:var(--gold);font-weight:700}
+.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--gold);background:var(--goldbg);font-size:15px;margin-top:8px}
+.x{background:none;border:0;font-size:16px;padding:2px 6px}
+.note{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;justify-content:space-between;gap:8px}
+.note small{color:var(--mut)}
+a{color:var(--ok);word-break:break-all}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <h1>🎓 Quedada del vídeo de graduación</h1>
-<p class="sub">4º de Educación Social · UGR. Marca los días en que puedes quedar y mira cuándo coincidís.</p>
+<p class="sub">4º de Educación Social · UGR</p>
 
 <div class="card">
-  <label for="nm" style="font-size:14px">Tu nombre (escríbelo siempre igual)</label>
+  <label for="nm" style="font-size:14px">Tu nombre (puedes cambiarlo cuando quieras)</label>
   <input id="nm" placeholder="Escribe tu nombre" maxlength="30" autocomplete="off">
 </div>
 
-<div class="card">
-  <div class="nav"><button id="prev" aria-label="Mes anterior">‹</button><b id="mon"></b><button id="next" aria-label="Mes siguiente">›</button></div>
-  <div class="grid" id="grid"></div>
-  <div class="leg">Toca un día: <b>M</b> mañana → <b>T</b> tarde → <b>M·T</b> ambas → quitar.<br>🟨 Tus días libres · borde verde = coincidís en esa franja</div>
-</div>
+<div class="tabs"><button id="t1" class="on">📅 Calendario</button><button id="t2">💡 Ideas</button></div>
 
-<div class="card">
-  <b style="font-size:15px">Días en común</b>
-  <div id="common" style="margin-top:6px"><span class="msg">Cargando…</span></div>
-</div>
+<section id="p1">
+  <div class="card">
+    <div class="nav"><button id="prev" aria-label="Mes anterior">‹</button><b id="mon"></b><button id="next" aria-label="Mes siguiente">›</button></div>
+    <div class="grid" id="grid"></div>
+    <div class="leg">Toca un día para abrirlo. 🟨 = tus días libres · borde verde = coincidís · letras M/T = mañana/tarde · • = hay notas</div>
+  </div>
 
-<div class="card">
-  <b style="font-size:15px">Quién ha marcado días</b>
-  <div id="people" style="margin-top:6px"></div>
-</div>
+  <div class="card" id="day" hidden>
+    <b id="dayT" style="font-family:Georgia,serif;font-size:17px;text-transform:capitalize"></b>
+    <div class="chips" id="slots"></div>
+    <div class="msg">Etiquetas del día</div>
+    <div class="chips" id="tags"></div>
+    <div class="msg">Notas</div>
+    <div id="notes"></div>
+    <input id="noteIn" placeholder="Escribe una nota…" maxlength="200">
+    <button class="btn" id="noteBtn">Añadir nota</button>
+  </div>
+
+  <div class="card"><b style="font-size:15px">Días en común</b><div id="common" style="margin-top:6px"><span class="msg">Cargando…</span></div></div>
+  <div class="card"><b style="font-size:15px">Quién ha marcado días</b><div id="people" style="margin-top:6px"></div></div>
+</section>
+
+<section id="p2" hidden>
+  <div class="card">
+    <b style="font-size:15px">Nueva idea</b>
+    <select id="itype">
+      <option>💡 Idea</option><option>📸 Instagram</option><option>🎵 Música</option><option>📍 Sitio</option><option>🎬 Escena</option>
+    </select>
+    <textarea id="itext" rows="3" placeholder="Cuéntanos la idea…" maxlength="500"></textarea>
+    <input id="iurl" placeholder="Enlace (opcional, empieza por https://)" inputmode="url">
+    <button class="btn" id="ibtn">Guardar idea</button>
+  </div>
+  <div id="ideas"></div>
+</section>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
-
-const app = initializeApp({
+let initializeApp,getFirestore,collection,doc,setDoc,addDoc,deleteDoc,onSnapshot,arrayUnion,arrayRemove,db;
+const CFG={
   apiKey: "AIzaSyBaAImejfqFHmWd0BK0tRIA6I79TZZ7qTI",
   authDomain: "video-graduacion.firebaseapp.com",
   projectId: "video-graduacion",
   storageBucket: "video-graduacion.firebasestorage.app",
   messagingSenderId: "1022798709445",
   appId: "1:1022798709445:web:3f3486cc8d6c25def166ac"
-});
-const db = getFirestore(app);
-const coll = collection(db, "avail");
-
+};
+const $=id=>document.getElementById(id);
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const DIAS=["L","M","X","J","V","S","D"];
+const TAGS=["🎬 Grabar","✂️ Editar","💡 Ideas","🎤 Entrevistas","🌳 Exteriores","🍕 Solo quedar","⚠️ Urgente"];
 const pad=n=>String(n).padStart(2,"0");
 const key=(y,m,d)=>y+"-"+pad(m+1)+"-"+pad(d);
-const now=new Date();const todayK=key(now.getFullYear(),now.getMonth(),now.getDate());
-let y=now.getFullYear(),m=now.getMonth();
-let all=[],myName="",myDays=[];
-
+const now=new Date(),todayK=key(now.getFullYear(),now.getMonth(),now.getDate());
+let y=now.getFullYear(),m=now.getMonth(),sel=null;
+let people=[],notes={},ideas=[],myName="",myDays=[];
 try{myName=localStorage.getItem("quedada-nombre")||""}catch(e){}
-const nm=document.getElementById("nm");nm.value=myName;
+$("nm").value=myName;
+const idOf=n=>n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const myId=()=>idOf(myName);
+const fmt=k=>{const [a,b,c]=k.split("-").map(Number);return new Date(a,b-1,c).toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"})};
+const fail=e=>{console.error(e);alert("No se ha podido guardar. Revisa la conexión o las reglas de Firebase.")};
+const needName=()=>{if(!myId()){alert("Primero escribe tu nombre arriba.");$("nm").focus();return true}return false};
+const mk=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e};
+function loadMine(){const p=people.find(p=>p.id===myId());myDays=p?(p.days||[]):[]}
 
-const myId=()=>myName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-
-function fmt(k){const [a,b,c]=k.split("-").map(Number);
-  return new Date(a,b-1,c).toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});}
-
-function loadMine(){
-  const mine=all.find(p=>p.id===myId());
-  myDays=mine?(mine.days||[]):[];
-}
-
-function render(){
-  document.getElementById("mon").textContent=MESES[m]+" "+y;
-  const g=document.getElementById("grid");g.innerHTML="";
-  DIAS.forEach(x=>{const e=document.createElement("div");e.className="dow";e.textContent=x;g.appendChild(e)});
-  const first=(new Date(y,m,1).getDay()+6)%7, n=new Date(y,m+1,0).getDate();
-  for(let i=0;i<first;i++)g.appendChild(document.createElement("div"));
+/* ---- calendario ---- */
+function renderCal(){
+  $("mon").textContent=MESES[m]+" "+y;
+  const g=$("grid");g.innerHTML="";
+  "LMXJVSD".split("").forEach(x=>g.appendChild(mk("div","dow",x)));
+  const first=(new Date(y,m,1).getDay()+6)%7,n=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++)g.appendChild(mk("div"));
   for(let d=1;d<=n;d++){
-    const k=key(y,m,d);
-    const sl=s=>all.filter(p=>(p.days||[]).includes(k+"|"+s)).length;
+    const k=key(y,m,d),b=mk("button","d",d);
+    const sl=s=>people.filter(p=>(p.days||[]).includes(k+"|"+s)).length;
     const mM=myDays.includes(k+"|M"),mT=myDays.includes(k+"|T");
-    const b=document.createElement("button");b.className="d";b.textContent=d;
-    if(k<todayK){b.className+=" off";b.disabled=true}
-    if(mM||mT)b.className+=" me";
-    if(sl("M")>=2||sl("T")>=2)b.className+=" both";
-    const lab=mM&&mT?"M·T":mM?"M":mT?"T":"";
-    if(lab)b.insertAdjacentHTML("beforeend","<i>"+lab+"</i>");
-    b.onclick=()=>toggle(k);g.appendChild(b);
+    if(k<todayK)b.classList.add("off");
+    if(mM||mT)b.classList.add("me");
+    if(sl("M")>=2||sl("T")>=2)b.classList.add("both");
+    if(k===sel)b.classList.add("sel");
+    const nd=notes[k]||{},tg=(nd.tags||[]).slice(0,2).map(t=>[...t][0]).join("");
+    const lab=(mM&&mT?"M·T":mM?"M":mT?"T":"")+((nd.items||[]).length?"•":"")+tg;
+    if(lab)b.appendChild(mk("i","",lab));
+    b.onclick=()=>{sel=k;renderCal();renderDay()};
+    g.appendChild(b);
   }
-  const map={};all.forEach(p=>(p.days||[]).forEach(k=>{map[k]=(map[k]||0)+1}));
+  const map={};people.forEach(p=>(p.days||[]).forEach(k=>{map[k]=(map[k]||0)+1}));
   const com=Object.keys(map).filter(k=>map[k]>=2&&k>=todayK).sort();
-  document.getElementById("common").innerHTML=com.length
-    ?com.map(k=>'<div class="row"><span>'+fmt(k.split("|")[0])+(k.endsWith("|M")?" · mañana":" · tarde")+'</span><span class="ok">✓</span></div>').join("")
-    :'<span class="msg">Aún no hay días en los que coincidáis.</span>';
-  const pe=document.getElementById("people");
-  pe.innerHTML=all.length?"":'<span class="msg">Nadie ha marcado días todavía.</span>';
-  all.forEach(p=>{const r=document.createElement("div");r.className="row";
-    const s=document.createElement("span");s.textContent=(p.name||"Sin nombre")+(p.id===myId()?" (tú)":"");
-    const t=document.createElement("span");
-    t.textContent=new Set((p.days||[]).filter(k=>k>=todayK).map(k=>k.split("|")[0])).size+" días";
-    r.append(s,t);pe.appendChild(r)});
+  const c=$("common");c.innerHTML="";
+  if(!com.length)c.appendChild(mk("span","msg","Aún no hay días en los que coincidáis."));
+  com.forEach(k=>{const r=mk("div","row");r.append(mk("span","",fmt(k.split("|")[0])+(k.endsWith("|M")?" · mañana":" · tarde")),mk("span","ok","✓"));c.appendChild(r)});
+  const pe=$("people");pe.innerHTML="";
+  if(!people.length)pe.appendChild(mk("span","msg","Nadie ha marcado días todavía."));
+  people.forEach(p=>{
+    const r=mk("div","row"),cnt=new Set((p.days||[]).filter(k=>k>=todayK).map(k=>k.split("|")[0])).size;
+    r.append(mk("span","",(p.name||"Sin nombre")+(p.id===myId()?" (tú)":"")+" · "+cnt+" días"));
+    const x=mk("button","x","🗑");x.title="Eliminar";
+    x.onclick=async()=>{if(confirm("¿Eliminar a "+(p.name||"esta persona")+" y sus días?"))try{await deleteDoc(doc(db,"avail",p.id))}catch(e){fail(e)}};
+    r.appendChild(x);pe.appendChild(r);
+  });
 }
-
-async function save(){
-  try{await setDoc(doc(db,"avail",myId()),{name:myName,days:myDays})}
-  catch(e){console.error(e);alert("No se ha podido guardar. Revisa tu conexión e inténtalo otra vez.")}
+async function saveMine(){try{await setDoc(doc(db,"avail",myId()),{name:myName,days:myDays})}catch(e){fail(e)}}
+function toggleSlot(s){
+  if(needName())return;
+  const v=sel+"|"+s;
+  myDays=myDays.includes(v)?myDays.filter(x=>x!==v):[...myDays,v].sort();
+  renderCal();renderDay();saveMine();
 }
-function toggle(k){
-  if(!myId()){alert("Primero escribe tu nombre arriba.");nm.focus();return}
-  const a=myDays.includes(k+"|M"),c=myDays.includes(k+"|T");
-  const rest=myDays.filter(x=>!x.startsWith(k+"|"));
-  const next=!a&&!c?["M"]:a&&!c?["T"]:!a&&c?["M","T"]:[];
-  myDays=[...rest,...next.map(s=>k+"|"+s)].sort();
-  render();save();
+function renderDay(){
+  $("day").hidden=!sel;if(!sel)return;
+  $("dayT").textContent=fmt(sel);
+  const sl=$("slots");sl.innerHTML="";
+  [["M","☀️ Mañana"],["T","🌙 Tarde"]].forEach(([s,t])=>{
+    const b=mk("button","chip"+(myDays.includes(sel+"|"+s)?" on":""),t);b.onclick=()=>toggleSlot(s);sl.appendChild(b)});
+  const nd=notes[sel]||{},tg=$("tags");tg.innerHTML="";
+  TAGS.forEach(t=>{
+    const on=(nd.tags||[]).includes(t),b=mk("button","chip"+(on?" on":""),t);
+    b.onclick=()=>setDoc(doc(db,"notes",sel),{tags:on?arrayRemove(t):arrayUnion(t)},{merge:true}).catch(fail);
+    tg.appendChild(b)});
+  const nt=$("notes");nt.innerHTML="";
+  if(!(nd.items||[]).length)nt.appendChild(mk("div","msg","Sin notas todavía."));
+  (nd.items||[]).forEach(it=>{
+    const r=mk("div","note"),l=mk("div");l.append(mk("span","",it.text),mk("br"),mk("small","",it.who));
+    const x=mk("button","x","🗑");
+    x.onclick=()=>setDoc(doc(db,"notes",sel),{items:arrayRemove(it)},{merge:true}).catch(fail);
+    r.append(l,x);nt.appendChild(r)});
 }
-document.getElementById("prev").onclick=()=>{m--;if(m<0){m=11;y--}render()};
-document.getElementById("next").onclick=()=>{m++;if(m>11){m=0;y++}render()};
-nm.onchange=()=>{
-  myName=nm.value.trim();
-  try{localStorage.setItem("quedada-nombre",myName)}catch(e){}
-  loadMine();render();
+$("noteBtn").onclick=()=>{
+  const t=$("noteIn").value.trim();if(!t||!sel||needName())return;
+  setDoc(doc(db,"notes",sel),{items:arrayUnion({id:Date.now()+"",who:myName,text:t})},{merge:true}).then(()=>{$("noteIn").value=""}).catch(fail);
 };
 
-render();
-onSnapshot(coll,snap=>{
-  all=snap.docs.map(d=>({id:d.id,...d.data()}));
-  loadMine();render();
-},e=>{
-  console.error(e);
-  document.getElementById("common").innerHTML='<span class="msg">No se pudieron cargar los datos.</span>';
-});
+/* ---- ideas ---- */
+function renderIdeas(){
+  const c=$("ideas");c.innerHTML="";
+  if(!ideas.length)c.appendChild(mk("div","msg","Aún no hay ideas. ¡Añade la primera!"));
+  ideas.forEach(i=>{
+    const card=mk("div","card"),top=mk("div","row");
+    top.append(mk("b","",i.type||"💡 Idea"));
+    const x=mk("button","x","🗑");
+    x.onclick=()=>{if(confirm("¿Eliminar esta idea?"))deleteDoc(doc(db,"ideas",i.id)).catch(fail)};
+    top.appendChild(x);card.appendChild(top);
+    if(i.text)card.appendChild(mk("p","",i.text));
+    if(/^https?:\/\//i.test(i.url||"")){const a=mk("a","",i.url);a.href=i.url;a.target="_blank";a.rel="noopener noreferrer";card.appendChild(a)}
+    card.appendChild(mk("small","msg","Por "+(i.who||"alguien")));
+    c.appendChild(card);
+  });
+}
+$("ibtn").onclick=()=>{
+  const text=$("itext").value.trim(),url=$("iurl").value.trim();
+  if((!text&&!url)||needName())return;
+  if(url&&!/^https?:\/\//i.test(url)){alert("El enlace debe empezar por https://");return}
+  addDoc(collection(db,"ideas"),{who:myName,type:$("itype").value,text,url,ts:Date.now()})
+    .then(()=>{$("itext").value="";$("iurl").value=""}).catch(fail);
+};
+
+/* ---- nombre, pestañas, navegación ---- */
+$("nm").onchange=async()=>{
+  const old=myName,oldId=myId();myName=$("nm").value.trim();
+  try{localStorage.setItem("quedada-nombre",myName)}catch(e){}
+  if(!myName)return;
+  const had=people.find(p=>p.id===oldId);
+  if(oldId&&had&&oldId!==myId()){myDays=had.days||[];await saveMine();try{await deleteDoc(doc(db,"avail",oldId))}catch(e){fail(e)}}
+  else if(oldId&&had&&old!==myName)saveMine();
+  loadMine();renderCal();renderDay();
+};
+const tab=n=>{$("p1").hidden=n!==1;$("p2").hidden=n!==2;$("t1").classList.toggle("on",n===1);$("t2").classList.toggle("on",n===2)};
+$("t1").onclick=()=>tab(1);$("t2").onclick=()=>tab(2);
+$("prev").onclick=()=>{m--;if(m<0){m=11;y--}renderCal()};
+$("next").onclick=()=>{m++;if(m>11){m=0;y++}renderCal()};
+
+renderCal();
+const err=e=>{console.error(e);$("common").textContent="No se pudieron cargar los datos: "+(e&&e.code||e&&e.message||e)};
+try{
+  const B="https://www.gstatic.com/firebasejs/10.12.2/";
+  ({initializeApp}=await import(B+"firebase-app.js"));
+  ({getFirestore,collection,doc,setDoc,addDoc,deleteDoc,onSnapshot,arrayUnion,arrayRemove}=await import(B+"firebase-firestore.js"));
+  db=getFirestore(initializeApp(CFG));
+  onSnapshot(collection(db,"avail"),s=>{people=s.docs.map(d=>({id:d.id,...d.data()}));loadMine();renderCal();renderDay()},err);
+  onSnapshot(collection(db,"notes"),s=>{notes={};s.docs.forEach(d=>notes[d.id]=d.data());renderCal();renderDay()},err);
+  onSnapshot(collection(db,"ideas"),s=>{ideas=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.ts||0)-(a.ts||0));renderIdeas()},err);
+}catch(e){err(e)}
 </script>
 </body>
 </html>
